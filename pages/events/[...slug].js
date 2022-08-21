@@ -6,6 +6,7 @@ import { Fragment, useEffect, useState } from 'react'
 import ResultsTitle from '../../components/events/results-title'
 import Button from '../../components/ui/button'
 import ErrorAlert from '../../components/ui/error-alert'
+import Head from 'next/head'
 
 function FilteredEventsPage(props) {
   const [loadedEvents, setLoadedEvents] = useState()
@@ -30,12 +31,35 @@ function FilteredEventsPage(props) {
     }
   }, [data])
 
+  let pageHeadData = (
+    <Head>
+      {' '}
+      <title>Filtered Events</title>
+      <meta name='description' content='A list of filtered events' />
+    </Head>
+  )
+
   if (!loadedEvents) {
-    return <p className='center'>Loading...</p>
+    return (
+      <Fragment>
+        {pageHeadData}
+        <p className='center'>Loading...</p>
+      </Fragment>
+    )
   }
 
   const filteredYear = +filterData[0]
   const filteredMonth = +filterData[1]
+
+  pageHeadData = (
+    <Head>
+      <title>Filtered Events</title>
+      <meta
+        name='description'
+        content={`Filtered events for ${filteredMonth}/${filteredYear}`}
+      />
+    </Head>
+  )
 
   if (
     isNaN(filteredYear) ||
@@ -48,6 +72,7 @@ function FilteredEventsPage(props) {
   ) {
     return (
       <Fragment>
+        {pageHeadData}
         <ErrorAlert>
           <p>Invalid filters. Please adjust your values!</p>
         </ErrorAlert>
@@ -69,6 +94,7 @@ function FilteredEventsPage(props) {
   if (!filteredEvents || filteredEvents.length === 0) {
     return (
       <Fragment>
+        {pageHeadData}
         <ErrorAlert>
           <p>No events found for the chosen filter!</p>
         </ErrorAlert>
@@ -83,6 +109,7 @@ function FilteredEventsPage(props) {
 
   return (
     <Fragment>
+      {pageHeadData}
       <ResultsTitle date={date}></ResultsTitle>
       <EventList items={filteredEvents}></EventList>
     </Fragment>
